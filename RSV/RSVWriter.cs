@@ -1,13 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace RSV;
 
-public class RSVWriter : RSVBase
+public class RSVWriter(Stream stream)
 {
-    public void Write(Stream stream, IEnumerable<string?[]> rows)
+    private readonly Stream _stream = stream ?? throw new ArgumentNullException(nameof(stream));
+
+    public void Write(IEnumerable<string?[]> rows)
     {
         foreach (var row in rows)
         {
@@ -15,19 +18,19 @@ public class RSVWriter : RSVBase
             {
                 if (value == null)
                 {
-                    stream.WriteByte(NULLVALUE);
+                    _stream.WriteByte(RSVConstants.NULLVALUE);
                 }
                 else
                 {
-                    stream.Write(Encoding.GetBytes(value));
+                    _stream.Write(RSVConstants.Encoding.GetBytes(value));
                 }
-                stream.WriteByte(VALUETERMINATOR);
+                _stream.WriteByte(RSVConstants.VALUETERMINATOR);
             }
-            stream.WriteByte(ROWTERMINATOR);
+            _stream.WriteByte(RSVConstants.ROWTERMINATOR);
         }
     }
 
-    public async Task WriteAsync(Stream stream, IEnumerable<string?[]> rows, CancellationToken cancellationToken = default)
+    public async Task WriteAsync(IEnumerable<string?[]> rows, CancellationToken cancellationToken = default)
     {
         foreach (var row in rows)
         {
@@ -39,15 +42,15 @@ public class RSVWriter : RSVBase
             {
                 if (value == null)
                 {
-                    stream.WriteByte(NULLVALUE);
+                    _stream.WriteByte(RSVConstants.NULLVALUE);
                 }
                 else
                 {
-                    await stream.WriteAsync(Encoding.GetBytes(value), cancellationToken).ConfigureAwait(false);
+                    await _stream.WriteAsync(RSVConstants.Encoding.GetBytes(value), cancellationToken).ConfigureAwait(false);
                 }
-                stream.WriteByte(VALUETERMINATOR);
+                _stream.WriteByte(RSVConstants.VALUETERMINATOR);
             }
-            stream.WriteByte(ROWTERMINATOR);
+            _stream.WriteByte(RSVConstants.ROWTERMINATOR);
         }
     }
 }

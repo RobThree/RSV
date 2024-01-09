@@ -1,43 +1,45 @@
 ﻿using RSV.Resources;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
 namespace RSV;
 
-public class RSVReader : RSVBase
+public class RSVReader(Stream stream)
 {
     private readonly MemoryStream _buffer = new();
+    private readonly Stream _stream = stream ?? throw new ArgumentNullException(nameof(stream));
 
-    public IEnumerable<string?[]> Read(Stream stream)
+    public IEnumerable<string?[]> Read()
     {
         var rowdata = new List<string?>();
         int lastchar;
-        var c = stream.ReadByte();
+        var c = _stream.ReadByte();
         _buffer.SetLength(0);
         while (c >= 0)
         {
-            if (c == VALUETERMINATOR)
+            if (c == RSVConstants.VALUETERMINATOR)
             {
-                rowdata.Add(Encoding.GetString(_buffer.ToArray()));
+                rowdata.Add(RSVConstants.Encoding.GetString(_buffer.ToArray()));
                 _buffer.SetLength(0);
             }
-            else if (c == NULLVALUE)
+            else if (c == RSVConstants.NULLVALUE)
             {
                 if (_buffer.Length > 0)
                 {
-                    throw new RSVException(Translations.UNEXPECTEDNULLTERMINATOR, stream.Position);
+                    throw new RSVException(Translations.UNEXPECTEDNULLTERMINATOR, _stream.Position);
                 }
-                c = stream.ReadByte();
-                if (c == VALUETERMINATOR)
+                c = _stream.ReadByte();
+                if (c == RSVConstants.VALUETERMINATOR)
                 {
                     rowdata.Add(null);
                 }
                 else
                 {
-                    throw new RSVException(Translations.EXPECTEDROWTERMINATOR, stream.Position);
+                    throw new RSVException(Translations.EXPECTEDROWTERMINATOR, _stream.Position);
                 }
             }
-            else if (c == ROWTERMINATOR)
+            else if (c == RSVConstants.ROWTERMINATOR)
             {
                 yield return rowdata.ToArray();
                 rowdata.Clear();
@@ -47,15 +49,15 @@ public class RSVReader : RSVBase
                 _buffer.WriteByte((byte)c);
             }
             lastchar = c;
-            c = stream.ReadByte();
-            if (c < 0 && lastchar != ROWTERMINATOR)
+            c = _stream.ReadByte();
+            if (c < 0 && lastchar != RSVConstants.ROWTERMINATOR)
             {
-                throw new RSVException(Translations.UNEXPECTEDENDOFFILE, stream.Position);
+                throw new RSVException(Translations.UNEXPECTEDENDOFFILE, _stream.Position);
             }
         }
         if (_buffer.Length > 0)
         {
-            throw new RSVException(Translations.EXPECTEDVALUETERMINATOR, stream.Position);
+            throw new RSVException(Translations.EXPECTEDVALUETERMINATOR, _stream.Position);
         }
     }
 }

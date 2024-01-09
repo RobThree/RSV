@@ -8,12 +8,13 @@ public class RSVReaderTests
     [TestMethod]
     public void ReadsValidFilesCorrectly()
     {
-        var target = new RSVReader();
         foreach (var file in Directory.GetFiles("Testfiles/Valid/", "*.rsv"))
         {
-            using var rsvfile = File.OpenRead(file);
+            using var rsvstream = File.OpenRead(file);
             using var checkfile = File.OpenRead(file.Replace(".rsv", ".json"));
-            var data = target.Read(rsvfile).ToArray();
+            var target = new RSVReader(rsvstream);
+
+            var data = target.Read().ToArray();
 
             var serialized = JsonSerializer.Serialize(data);
             var check = JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(checkfile));
@@ -24,15 +25,15 @@ public class RSVReaderTests
     [TestMethod]
     public void ThrowsOnInvalidFiles()
     {
-        var target = new RSVReader();
         foreach (var file in Directory.GetFiles("Testfiles/Invalid/", "*.rsv"))
         {
-            using var rsvfile = File.OpenRead(file);
+            using var rsvstream = File.OpenRead(file);
+            var target = new RSVReader(rsvstream);
             var thrown = false;
 
             try
             {
-                var _ = target.Read(rsvfile).ToArray();
+                var _ = target.Read().ToArray();
             }
             catch
             {

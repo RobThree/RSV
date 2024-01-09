@@ -8,10 +8,10 @@ This library provides a simple way to parse and generate [RSV (Row of String Val
 
 ```c#
 using var stream = File.OpenRead("test.rsv");
-var reader = new RsvReader();
+var reader = new RsvReader(stream);
 
 // Dump data
-foreach (var row in reader.Read(rsvfile)) {
+foreach (var row in reader.Read()) {
 	Console.WriteLine(string.Join("\t", row));
 }
 ```
@@ -21,17 +21,17 @@ foreach (var row in reader.Read(rsvfile)) {
 ```c#
 
 using var stream = File.Create("test.rsv");
-var writer = new RsvWriter();
+var writer = new RsvWriter(stream);
 string[][] data = [
     ["A", "B", "C"],
     ["1", "2", "3"]
 ];
 
 // Write data
-writer.Write(stream, data);
+writer.Write(data);
 
 // ...or write data async (you can optionally pass a CancellationToken):
-await writer.WriteAsync(stream, data);
+await writer.WriteAsync(data);
 ```
 
 ## Attibution

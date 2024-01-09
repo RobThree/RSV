@@ -6,16 +6,18 @@ public class RSVWriterTests
     [TestMethod]
     public void WritesFilesCorrectly()
     {
-        var reader = new RSVReader();
-        var target = new RSVWriter();
         foreach (var file in Directory.GetFiles("Testfiles/Valid/", "*.rsv"))
         {
             var checkfilename = file.Replace(".rsv", ".check");
-            using var rsvfile = File.OpenRead(file);
-            using var checkfile = File.Create(checkfilename);
-            target.Write(checkfile, reader.Read(rsvfile));
-            rsvfile.Dispose();
-            checkfile.Dispose();
+            using var rsvstream = File.OpenRead(file);
+            var reader = new RSVReader(rsvstream);
+
+            using var outstream = File.Create(checkfilename);
+            var target = new RSVWriter(outstream);
+
+            target.Write(reader.Read());
+            rsvstream.Dispose();
+            outstream.Dispose();
 
             Assert.IsTrue(Enumerable.SequenceEqual(File.ReadAllBytes(file), File.ReadAllBytes(checkfilename)), $"File {file} wrote incorrectly");
         }
@@ -24,16 +26,18 @@ public class RSVWriterTests
     [TestMethod]
     public async Task WritesFilesAsyncCorrectly()
     {
-        var reader = new RSVReader();
-        var target = new RSVWriter();
         foreach (var file in Directory.GetFiles("Testfiles/Valid/", "*.rsv"))
         {
             var checkfilename = file.Replace(".rsv", ".checkasync");
-            using var rsvfile = File.OpenRead(file);
-            using var checkfile = File.Create(checkfilename);
-            await target.WriteAsync(checkfile, reader.Read(rsvfile)).ConfigureAwait(false);
-            rsvfile.Dispose();
-            checkfile.Dispose();
+            using var rsvstream = File.OpenRead(file);
+            var reader = new RSVReader(rsvstream);
+
+            using var outstream = File.Create(checkfilename);
+            var target = new RSVWriter(outstream);
+
+            await target.WriteAsync(reader.Read()).ConfigureAwait(false);
+            rsvstream.Dispose();
+            outstream.Dispose();
 
             Assert.IsTrue(Enumerable.SequenceEqual(File.ReadAllBytes(file), File.ReadAllBytes(checkfilename)), $"File {file} wrote incorrectly");
         }
