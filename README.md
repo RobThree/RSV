@@ -1,6 +1,6 @@
 # RSV
 
-This library provides a simple way to parse and generate [RSV (Row of String Values) files](https://github.com/Stenway/RSV-Specification). This library reads / writes in a streaming way so memory usage is minimal.
+This library, [available on NuGet](https://www.nuget.org/packages/RSV), provides a simple way to parse and generate [RSV (Row of String Values) files](https://github.com/Stenway/RSV-Specification). This library reads / writes in a streaming way so memory usage is minimal.
 
 ## Quickstart
 

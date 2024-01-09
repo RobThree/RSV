@@ -7,12 +7,12 @@ namespace RSV;
 
 public class RSVReader(Stream stream)
 {
-    private readonly MemoryStream _buffer = new();
+    private readonly MemoryStream _buffer = new(4096);
     private readonly Stream _stream = stream ?? throw new ArgumentNullException(nameof(stream));
 
     public IEnumerable<string?[]> Read()
     {
-        var rowdata = new List<string?>();
+        var rowdata = new List<string?>(50);
         int lastchar;
         var c = _stream.ReadByte();
         _buffer.SetLength(0);
