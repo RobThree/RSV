@@ -1,4 +1,7 @@
-# RSV
+# ![logo](https://raw.githubusercontent.com/RobThree/RSV/master/logo_24x24.png) RSV
+
+![Build Status](https://img.shields.io/github/actions/workflow/status/RobThree/RSV/test.yml?branch=main&style=flat-square) [![Nuget version](https://img.shields.io/nuget/v/RSV.svg?style=flat-square)](https://www.nuget.org/packages/RSV/)
+
 
 This library, [available on NuGet](https://www.nuget.org/packages/RSV), provides a simple way to parse and generate [RSV (Row of String Values) files](https://github.com/Stenway/RSV-Specification). This library reads / writes in a streaming way so memory usage is minimal.
 
