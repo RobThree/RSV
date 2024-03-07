@@ -1,4 +1,4 @@
-# ![logo](https://raw.githubusercontent.com/RobThree/RSV/master/logo_24x24.png) RSV
+# ![logo](https://raw.githubusercontent.com/RobThree/RSV/main/logo_24x24.png) RSV
 
 ![Build Status](https://img.shields.io/github/actions/workflow/status/RobThree/RSV/test.yml?branch=main&style=flat-square) [![Nuget version](https://img.shields.io/nuget/v/RSV.svg?style=flat-square)](https://www.nuget.org/packages/RSV/)
 
